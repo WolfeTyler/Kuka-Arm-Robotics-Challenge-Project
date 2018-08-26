@@ -7,4 +7,4 @@
 
 This project uses a simulated version of the [Kuka KR210](https://www.kuka.com/en-us/products/robotics-systems/industrial-robots/kr-210-2-f-exclusive) 6 DOF robotic arm to pick items from a shelf and deposit them into a storage container.
 
-[kuka]
+![Kuka Gazebo][kuka]
