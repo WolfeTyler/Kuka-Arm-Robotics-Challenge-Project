@@ -48,6 +48,16 @@ def handle_calculate_IK(req):
                     alpha5: -pi/2., a5: 0,      d6: 0,      q6: q6,
                     alpha6: 0,      a6: 0,      d7: 0.303,  q7: 0}
 
+        
+        # Define Modified DH Transformation matrix
+
+        def dh_transform(alpha, a, d, q):
+            dhtMatrix = Matrix([  [            cos(q),           -sin(q),           0,             a],
+                            [ sin(q)*cos(alpha), cos(q)*cos(alpha), -sin(alpha), -sin(alpha)*d],
+                            [ sin(q)*sin(alpha), cos(q)*sin(alpha),  cos(alpha),  cos(alpha)*d],
+                            [                 0,                 0,           0,             1]
+                        ])
+            return dhtMatrix                
 
     ### Your FK code here
     # Create symbols
