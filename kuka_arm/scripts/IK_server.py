@@ -71,11 +71,36 @@ def handle_calculate_IK(req):
         T6_7 = dh_transform(alpha6, a6, d7, q7).subs(dhParams)
         T0_7 = (T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6 * T6_7)
 
+
+        # Extract rotation matrices from the transformation matrices
+
+        # Roll, Pitch, Yaw Symbols
+        r, p , y = symbols('r p y')
+        # Roll
+        rotationX = Matrix([
+                            [1,     0 ,       0],
+                            [0, cos(r), -sin(r)],
+                            [0, sin(r),  cos(r)]
+                            ])
+        # Pitch
+        rotationY = Matrix([
+                            [  cos(p),    0,  sin(p)],
+                            [       0,    1,       0],
+                            [ -sin(p),    0,  cos(p)]
+                            ])
+        # Yaw
+        rotationZ = Matrix([
+                            [cos(y),   -sin(y), 0],
+                            [sin(y),    cos(y), 0],
+                            [     0,         0, 1]
+                            ])
+
+        rotationEE = (rotationX * rotationY * rotationZ)
+        rotationErr = rotationZ.subs(y, radians(180)) * rotationY.subs(p, radians(-90))
+        rotationEE = (rotationEE * rotationErr)
+
     ### Your FK code here
  
-	# Extract rotation matrices from the transformation matrices
-	#
-	#
         ###
 
         # Initialize service response
