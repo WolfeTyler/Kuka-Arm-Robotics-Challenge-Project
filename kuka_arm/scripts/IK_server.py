@@ -57,21 +57,22 @@ def handle_calculate_IK(req):
                             [ sin(q)*sin(alpha), cos(q)*sin(alpha),  cos(alpha),  cos(alpha)*d],
                             [                 0,                 0,           0,             1]
                         ])
-            return dhtMatrix                
+            return dhtMatrix      
+
+
+        # Create individual transformation matrices
+
+        T0_1 = dh_transform(alpha0, a0, d1, q1).subs(dhParams)
+        T1_2 = dh_transform(alpha1, a1, d2, q2).subs(dhParams)
+        T2_3 = dh_transform(alpha2, a2, d3, q3).subs(dhParams)
+        T3_4 = dh_transform(alpha3, a3, d4, q4).subs(dhParams)
+        T4_5 = dh_transform(alpha4, a4, d5, q5).subs(dhParams)
+        T5_6 = dh_transform(alpha5, a5, d6, q6).subs(dhParams)
+        T6_7 = dh_transform(alpha6, a6, d7, q7).subs(dhParams)
+        T0_7 = (T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6 * T6_7)
 
     ### Your FK code here
-    # Create symbols
-	#
-	#
-	# Create Modified DH parameters
-	#
-	#
-	# Define Modified DH Transformation matrix
-	#
-	#
-	# Create individual transformation matrices
-	#
-	#
+ 
 	# Extract rotation matrices from the transformation matrices
 	#
 	#
