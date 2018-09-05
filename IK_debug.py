@@ -61,15 +61,130 @@ def test_code(test_case):
     
     ########################################################################################
     ## 
-
-    ## Insert IK code here!
     
-    theta1 = 0
-    theta2 = 0
-    theta3 = 0
-    theta4 = 0
-    theta5 = 0
-    theta6 = 0
+    print 'Creating symbols'
+    # Create symbols
+
+    # Joint angles
+    q1, q2, q3, q4, q5, q6, q7 = symbols('q1:8')
+    # Link len's
+    a0, a1, a2, a3, a4, a5, a6 = symbols('a0:7')
+    # Link offsets
+    d1, d2, d3, d4, d5, d6, d7 = symbols('d1:8')
+    # Joint twists
+    alpha0, alpha1, alpha2, alpha3, alpha4, alpha5, alpha6 = symbols('alpha0:7')
+
+
+    print 'Creating DH parameters'
+    # Create Modified DH parameters
+
+    dhParams = {alpha0: 0,      a0: 0,      d1: 0.75,   q1: q1,
+                alpha1: -pi/2., a1: 0.35,   d2: 0,      q2: -pi/2. + q2,
+                alpha2: 0,      a2: 1.25,   d3: 0,      q3: q3,
+                alpha3: -pi/2., a3: -0.054, d4: 1.5,    q4: q4,
+                alpha4: pi/2,   a4: 0,      d5: 0,      q5: q5,
+                alpha5: -pi/2., a5: 0,      d6: 0,      q6: q6,
+                alpha6: 0,      a6: 0,      d7: 0.303,  q7: 0}
+
+    
+    print 'Defining DH transformation matrix'
+    # Define Modified DH Transformation matrix
+
+    def dh_transform(alpha, a, d, q):
+        dhtMatrix = Matrix([  [            cos(q),           -sin(q),           0,             a],
+                        [ sin(q)*cos(alpha), cos(q)*cos(alpha), -sin(alpha), -sin(alpha)*d],
+                        [ sin(q)*sin(alpha), cos(q)*sin(alpha),  cos(alpha),  cos(alpha)*d],
+                        [                 0,                 0,           0,             1]
+                    ])
+        return dhtMatrix  
+
+    print 'Creating individual transform matrices'
+    # Create individual transformation matrices
+
+    T0_1 = dh_transform(alpha0, a0, d1, q1).subs(dhParams)
+    T1_2 = dh_transform(alpha1, a1, d2, q2).subs(dhParams)
+    T2_3 = dh_transform(alpha2, a2, d3, q3).subs(dhParams)
+    T3_4 = dh_transform(alpha3, a3, d4, q4).subs(dhParams)
+    T4_5 = dh_transform(alpha4, a4, d5, q5).subs(dhParams)
+    T5_6 = dh_transform(alpha5, a5, d6, q6).subs(dhParams)
+    T6_7 = dh_transform(alpha6, a6, d7, q7).subs(dhParams)
+    T0_7 = (T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6 * T6_7)
+
+
+    # Extract rotation matrices from the transformation matrices
+    print 'Creating roll, pitch, and yaw rotation matrices'
+    # Roll, Pitch, Yaw Symbols
+    r, p , y = symbols('r p y')
+    # Roll
+    rotationX = Matrix([
+                        [1,     0 ,       0],
+                        [0, cos(r), -sin(r)],
+                        [0, sin(r),  cos(r)]
+                        ])
+    # Pitch
+    rotationY = Matrix([
+                        [  cos(p),    0,  sin(p)],
+                        [       0,    1,       0],
+                        [ -sin(p),    0,  cos(p)]
+                        ])
+    # Yaw
+    rotationZ = Matrix([
+                        [cos(y),   -sin(y), 0],
+                        [sin(y),    cos(y), 0],
+                        [     0,         0, 1]
+                        ])
+
+    ROT_EE = (rotationX * rotationY * rotationZ)
+    rotationErr = rotationZ.subs(y, radians(180)) * rotationY.subs(p, radians(-90))
+    ROT_EE = (ROT_EE * rotationErr)
+
+
+    
+    px = req.poses[x].position.x
+    py = req.poses[x].position.y
+    pz = req.poses[x].position.z
+
+    (roll, pitch, yaw) = tf.transformations.euler_from_quaternion(
+        [req.poses[x].orientation.x, req.poses[x].orientation.y,
+            req.poses[x].orientation.z, req.poses[x].orientation.w])
+
+    ROT_EE = ROT_EE.subs({'r': roll, 'p': pitch, 'y': yaw})
+    EE = Matrix([[px], [py], [pz]])
+    WC = EE - (0.303) * ROT_EE[:,2]
+    
+    print 'Calculating theta1'
+    theta1 = atan2(WC[1], WC[0])
+
+    side_a = 1.501
+    side_b = sqrt(pow(sqrt(WC[0] * WC[0] + WC[1] * WC[1]) - 0.35, 2)+ pow((WC[2] - 0.75), 2))
+    side_c = 1.25
+
+    angle_a = acos((side_b * side_b + side_c * side_c - side_a * side_a) / (2 * side_b * side_c))
+    angle_b = acos((side_a * side_a + side_c * side_c - side_b * side_b) / (2 * side_a * side_c))
+    angle_c = acos((side_a * side_a + side_b * side_b - side_c * side_c ) / (2 * side_a * side_b))
+
+    print 'Calculating theta2'
+    theta2 = pi/2 - angle_a - atan2(WC[2] - 0.75, sqrt(WC[0] * WC[0] + WC[1] * WC[1]) - 0.35)
+    print 'Calculating theta3'
+    theta3 = pi/2 - (angle_b + 0.036)
+
+    R0_3 = T0_1[0:3,0:3] * T1_2[0:3,0:3] * T2_3[0:3,0:3]
+    R0_3 = R0_3.evalf(subs={q1: theta1, q2:theta2, q3: theta3})
+    R3_6 = R0_3.transpose() * rotationErr
+
+    print 'Calculating theta4'
+    theta4 = atan2(R3_6[2,2], -R3_6[0,2])
+    print 'Calculating theta5'
+    theta5 = atan2(sqrt(R3_6[0,2]*R3_6[0,2] + R3_6[2,2]*R3_6[2,2]), R3_6[1,2])
+    print 'Calculating theta6'
+    theta6 = atan2(-R3_6[1,1], R3_6[1,0])
+
+    print (theta1)
+    print (theta2)
+    print (theta3)
+    print (theta4)
+    print (theta5)
+    print (theta6)
 
     ## 
     ########################################################################################
@@ -78,7 +193,7 @@ def test_code(test_case):
     ## For additional debugging add your forward kinematics here. Use your previously calculated thetas
     ## as the input and output the position of your end effector as your_ee = [x,y,z]
 
-    ## (OPTIONAL) YOUR CODE HERE!
+    FK = T0_7.evalf(subs={q1: theta1, q2:theta2, q3:theta3, q4:theta4, q5:theta5, q6:theta6})
 
     ## End your code input for forward kinematics here!
     ########################################################################################
