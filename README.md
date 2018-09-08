@@ -17,3 +17,7 @@ Tasks to be performed:
 
 ![kuka-gazebo-gif](https://github.com/WolfeTyler/Kuka-Arm-Robotics-Challenge-Project/blob/master/images/req-challenge.gif)
 
+I posted a successful pick and place on youtube here:
+
+[![Youtube Video](http://img.youtube.com/vi/odLVMeGWJ18/0.jpg)](https://youtu.be/R3zy9lVtCY0)
+
