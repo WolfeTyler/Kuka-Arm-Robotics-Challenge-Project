@@ -17,12 +17,11 @@
 
 [//]: # (Image References)
 
-[image1]: ./misc_images/misc1.png
-[image2]: ./misc_images/misc3.png
+[image1]: ./images/Selection_079.png
+[image2]: ./images/Selection_081.png
 [image3]: ./misc_images/misc2.png
 
-## [Rubric](https://review.udacity.com/#!/rubrics/972/view) Points
-### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
+## [Rubric](https://review.udacity.com/#!/rubrics/972/view) Points 
 
 ---
 ### Writeup / README
@@ -34,9 +33,10 @@ You're reading it!
 ### Kinematic Analysis
 #### 1. Run the forward_kinematics demo and evaluate the kr210.urdf.xacro file to perform kinematic analysis of Kuka KR210 robot and derive its DH parameters.
 
-Here is an example of how to include an image in your writeup.
+Diagram of the The Kuka KR210 has 6 revolute joints.
 
 ![alt text][image1]
+![alt text][image2]
 
 #### 2. Using the DH parameter table you derived earlier, create individual transformation matrices about each joint. In addition, also generate a generalized homogeneous transform between base_link and gripper_link using only end-effector(gripper) pose.
 
