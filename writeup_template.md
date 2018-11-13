@@ -31,6 +31,8 @@
 [image12]: ./images/T5_6.png
 [image13]: ./images/T6_7.png
 [image14]: ./images/kuka_pickplace_success.png
+[image15]: ./images/thetas1to3.png
+[image16]: ./images/thetas4to6.png
 
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/972/view) Points 
@@ -85,6 +87,11 @@ T6_7
 ![alt text][image13]
 
 #### 3. Decouple Inverse Kinematics problem into Inverse Position Kinematics and inverse Orientation Kinematics; doing so derive the equations to calculate all individual joint angles.
+
+
+![alt text][image15]
+
+![alt text][image16]
 
 ```
 theta1 = atan2(WC[1], WC[0])
