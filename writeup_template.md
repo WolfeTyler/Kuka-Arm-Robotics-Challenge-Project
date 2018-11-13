@@ -30,6 +30,7 @@
 [image11]: ./images/T4_5.png
 [image12]: ./images/T5_6.png
 [image13]: ./images/T6_7.png
+[image14]: ./images/kuka_pickplace_success.png
 
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/972/view) Points 
@@ -85,7 +86,7 @@ T6_7
 
 #### 3. Decouple Inverse Kinematics problem into Inverse Position Kinematics and inverse Orientation Kinematics; doing so derive the equations to calculate all individual joint angles.
 
-
+```
 theta1 = atan2(WC[1], WC[0])
 
 side_a = 1.501
@@ -106,7 +107,7 @@ R3_6 = R0_3.transpose() * ROT_EE
 theta4 = atan2(R3_6[2,2], -R3_6[0,2])
 theta5 = atan2(sqrt(R3_6[0,2]*R3_6[0,2] + R3_6[2,2]*R3_6[2,2]), R3_6[1,2])
 theta6 = atan2(-R3_6[1,1], R3_6[1,0])    
-
+```
 
 ### Project Implementation
 
@@ -120,5 +121,7 @@ The IK_server.py and IK_debug.py files contain the bulk of my code in addition t
 I posted a successful pick and place on youtube here:
 
 [![Youtube Video](http://img.youtube.com/vi/odLVMeGWJ18/0.jpg)](https://youtu.be/R3zy9lVtCY0)
+
+![alt text][image14]
 
 
